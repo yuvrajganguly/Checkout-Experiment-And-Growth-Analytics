@@ -1,304 +1,99 @@
-Checkout Experiment & Growth Analytics
-Project Overview
+# Checkout Experiment & Growth Analytics
 
-This project analyzes the impact of a new checkout experience (Variant B) introduced by an e-commerce company to reduce checkout drop-offs and improve revenue. The goal is to build an end-to-end analytics solution that cleans raw data, constructs a reliable analytics layer, analyzes funnel performance, evaluates the A/B experiment, and delivers actionable business insights.
+An end-to-end e-commerce analytics project covering ETL, A/B experiment evaluation, funnel analysis, and a Power BI dashboard — with a final recommendation on whether to roll out a new checkout experience.
 
-The project includes:
+---
 
-A Python-based ETL pipeline for data cleaning and transformation
+## Business Objective
 
-Curated analytical datasets
+An e-commerce company launched a redesigned checkout flow (Variant B) to reduce drop-offs and increase purchase completion. This project answers:
 
-Funnel and KPI analysis
+- Should Variant B be rolled out to all users?
+- Where are the largest funnel drop-offs?
+- Which user segments drive the most conversion and revenue?
+- What is the projected revenue impact of a full rollout over 30 days?
 
-A/B experiment evaluation
+---
 
-Business impact estimation
+## Key Finding
 
-An interactive analytics dashboard built in Microsoft Power BI Desktop
+| Metric | Variant A | Variant B |
+|---|---|---|
+| Conversion Rate | 8.38% | 9.99% |
+| Relative Lift | — | **+19.2%** |
 
-The final output provides a decision-ready recommendation on whether the new checkout variant should be rolled out to all users.
+**Recommendation: Roll out Variant B.** Results are statistically significant. The largest remaining opportunity is reducing mobile checkout friction.
 
-Business Objective
+---
 
-The company launched a new checkout design (Variant B) to improve purchase completion and reduce friction during checkout.
+## Project Structure
 
-Key questions addressed:
+```
+Checkout-Experiment-And-Growth-Analytics/
+│
+├── Raw/                        # Source datasets (users, sessions, events, orders, products, campaigns)
+├── ETL/
+│   └── etl_pipeline.py         # Data cleaning, feature engineering, output table generation
+├── Processed/                  # Curated analytical tables (fact_orders, fact_sessions, dim_users)
+├── Analysis/
+│   └── analysis.ipynb          # KPIs, funnel analysis, A/B test, segment breakdown, impact estimate
+├── Dashboard/
+│   ├── Ecommerce_Analytics_Dashboard.pbix
+│   └── Dashboard_Screenshots/
+└── Final_story/
+    └── final_memo.pdf          # Decision-ready summary memo
+```
 
-Should Variant B be rolled out to all users?
+---
 
-Where are the largest funnel drop-offs?
+## Dataset
 
-Which user segments drive conversion and revenue performance?
+Synthetic dataset of 2,200 users, 9,036 sessions, 18,945 events, and 707 orders across 220 products. Raw data includes intentional quality issues (missing values, duplicate sessions, inconsistent casing) to simulate a real pipeline.
 
-What is the expected revenue impact of rolling out Variant B over the next 30 days?
+Source files: `users.csv`, `sessions.csv`, `events.csv`, `orders.csv`, `order_items.csv`, `products.json`, `campaigns.csv`
 
-Project Structure
-Capstone_CheckoutAnalytics/
+---
 
-README.md
+## ETL Pipeline
 
-data/
-fact_sessions.csv
-fact_orders.csv
-dim_users_enriched.csv
-
-etl/
-etl_pipeline.py
-
-analysis/
-analysis.ipynb
-
-dashboard/
-dashboard.pbix
-dashboard_screenshots/
-
-final_story/
-final_deck.pdf
-Data Pipeline (ETL)
-
-The ETL pipeline processes raw datasets and produces curated analytical tables.
-
-Steps performed:
-
-Load raw datasets
-
-users.csv
-
-sessions.csv
-
-events.csv
-
-orders.csv
-
-order_items.csv
-
-products.json
-
-campaigns.csv
-
-Data cleaning
-
-Remove duplicate sessions
-
-Handle missing values in device and channel fields
-
-Normalize inconsistent text casing
-
-Detect and cap extreme revenue outliers
-
-Feature engineering
-
-Funnel stage flags
-
-Session duration and time-to-step metrics
-
-Revenue metrics
-
-Basket summaries
-
-User-level aggregated metrics
-
-Generated Datasets
-fact_sessions.csv
-
-Session-level dataset containing:
-
-session_id
-
-user_id
-
-device
-
-channel
-
-campaign_id
-
-experiment variant
-
-funnel step flags
-
-time-to-step metrics
-
-session revenue fields
-
-fact_orders.csv
-
-Order-level dataset containing:
-
-order_id
-
-session_id
-
-user_id
-
-payment_method
-
-net_amount
-
-basket statistics
-
-product category information
-
-margin proxy
-
-dim_users_enriched.csv
-
-User-level dataset containing:
-
-signup_date
-
-user segment
-
-city tier
-
-preferred device
-
-lifetime sessions
-
-lifetime orders
-
-repeat user flag
-
-user value band
-
-Analysis
-
-The analysis notebook performs the following:
-
-KPI Calculations
-
-Core business metrics:
-
-Conversion Rate
-
-Revenue
-
-Average Order Value
-
-Revenue per session
-
-Funnel stage conversions
-
-Funnel Analysis
-
-Reconstructs the user journey:
-
-Product View → Add to Cart → Begin Checkout → Payment Attempt → Purchase
-
-Identifies the largest drop-off points and potential friction areas.
-
-A/B Experiment Analysis
-
-Comparison between Variant A and Variant B:
-
-Variant A conversion rate: 8.38%
-Variant B conversion rate: 9.99%
-
-Result:
-
-Variant B delivers a ~19% relative improvement in conversion rate.
-
-Segment Analysis
-
-Performance evaluated across:
-
-device
-
-marketing channel
-
-new vs returning users
-
-product categories
-
-Impact Estimation
-
-Estimated impact of rolling out Variant B across all sessions:
-
-projected increase in completed orders
-
-projected incremental revenue over the next 30 days
-
-Dashboard
-
-An interactive analytics dashboard was created using Power BI.
-
-The dashboard contains four main pages:
-
-Executive Overview
-
-Revenue
-
-Orders
-
-Average Order Value
-
-Conversion Rate
-
-Revenue trend
-
-Funnel Analysis
-
-Funnel step conversions
-
-Drop-off analysis
-
-Time-to-step insights
-
-Segment Explorer
-
-Performance comparison across:
-
-device
-
-channel
-
-new vs returning users
-
-product categories
-
-Experiment Deep Dive
-
-Variant A vs Variant B conversion comparison
-
-segment-level experiment results
-
-experiment insights
-
-Dashboard screenshots are included in the dashboard_screenshots folder.
-
-How to Run the ETL Pipeline
-
-Install required Python packages
-
+```bash
 pip install pandas numpy
-
-Navigate to the ETL directory
-
-cd etl
-
-Run the pipeline
-
+cd ETL
 python etl_pipeline.py
+```
 
-The script generates the curated datasets in the data directory.
+Produces three output tables in `Processed/`:
 
-Final Deliverables
+- **fact_orders** — order-level metrics: basket size, top category, margin proxy, avg rating
+- **fact_sessions** — session-level metrics: funnel stage flags, event count, conversion flag, campaign info
+- **dim_users** — user-level aggregates: lifetime value, total orders, avg order value
 
-This project includes:
+---
 
-Python ETL pipeline
+## Analysis
 
-Curated analytics datasets
+The notebook (`Analysis/analysis.ipynb`) covers:
 
-Analysis notebook
+- **Funnel reconstruction** — Product View → Add to Cart → Begin Checkout → Payment Attempt → Purchase
+- **A/B experiment evaluation** — conversion rate comparison with statistical significance testing
+- **Segment analysis** — by device, channel, and new vs. returning users
+- **30-day revenue impact estimate** — projected incremental orders and revenue from full rollout
 
-Interactive Power BI dashboard
+---
 
-Final presentation summarizing insights and recommendations
+## Dashboard
 
-Key Recommendation
+Built in Power BI Desktop. Four pages:
 
-The A/B experiment results show that Variant B significantly improves checkout conversion rates.
+1. **Executive Overview** — revenue, AOV, conversion rate, revenue trend
+2. **Funnel Analysis** — step-by-step drop-off rates and time-to-step
+3. **Segment Explorer** — performance by device, channel, user type, product category
+4. **Experiment Deep Dive** — Variant A vs B across all segments
 
-Based on the analysis, rolling out Variant B to all users is recommended, with further experimentation focused on reducing checkout friction and improving mobile purchase experiences.
+Screenshots in `Dashboard/Dashboard_Screenshots/`.
+
+---
+
+## Tools
+
+Python · pandas · Power BI · Jupyter
